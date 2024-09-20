@@ -23,3 +23,15 @@ model User {
 
   @@map("users")
 }
+
+model Product {
+  id Int @id @default(autoincrement())
+  name String
+  description String @db.Text
+  price Decimal
+  tags String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("products")
+}
