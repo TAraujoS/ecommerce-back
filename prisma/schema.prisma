@@ -13,17 +13,41 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  USER
+}
+
 model User {
   id Int @id @default(autoincrement())
   name String
   email String @unique
   password String
+  role Role @default(USER)
+  defaultBillingAddress Int?
+  defaultShippingAddress Int?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  addresses Address[]
+  
   @@map("users")
 }
 
+model Address {
+  id Int @id @default(autoincrement())
+  cep String
+  city String
+  state String
+  country String
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+@@map("addresses")
+}
 model Product {
   id Int @id @default(autoincrement())
   name String
@@ -35,3 +59,4 @@ model Product {
 
   @@map("products")
 }
+
