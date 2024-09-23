@@ -3,10 +3,25 @@ import { PORT } from "./secrets";
 import rootRouter from "./routes";
 import { PrismaClient } from "@prisma/client";
 import { errorMiddleware } from "./middlewares/errors";
+import helmet from "helmet";
+import toobusy from "toobusy-js";
+import cors from "cors";
 
 const app: Express = express();
 
 app.use(express.json());
+
+app.use(cors());
+
+app.use(helmet());
+
+app.use(function (req, res, next) {
+  if (toobusy()) {
+    res.send(503);
+  } else {
+    next();
+  }
+});
 
 app.use("/api", rootRouter);
 
