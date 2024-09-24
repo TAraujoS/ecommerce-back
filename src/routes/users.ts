@@ -4,10 +4,14 @@ import { errorHandler } from "../error-handler";
 import authMiddleware from "../middlewares/auth";
 import {
   addAddress,
+  changeUserRole,
   deleteAddress,
+  getUserById,
   listAddress,
+  listUsers,
   updateUser,
 } from "../controllers/users";
+import adminMiddleware from "../middlewares/admin";
 
 const usersRoutes: Router = Router();
 
@@ -19,5 +23,20 @@ usersRoutes.delete(
   errorHandler(deleteAddress)
 );
 usersRoutes.put("/", [authMiddleware], errorHandler(updateUser));
+usersRoutes.put(
+  "/:id/role",
+  [authMiddleware, adminMiddleware],
+  errorHandler(changeUserRole)
+);
+usersRoutes.get(
+  "/",
+  [authMiddleware, adminMiddleware],
+  errorHandler(listUsers)
+);
+usersRoutes.get(
+  "/:id",
+  [authMiddleware, adminMiddleware],
+  errorHandler(getUserById)
+);
 
 export default usersRoutes;
