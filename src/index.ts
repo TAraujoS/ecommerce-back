@@ -1,4 +1,4 @@
-import express, { Request, Response, Express } from "express";
+import express, { Express } from "express";
 import { PORT } from "./secrets";
 import rootRouter from "./routes";
 import { PrismaClient } from "@prisma/client";
@@ -6,6 +6,8 @@ import { errorMiddleware } from "./middlewares/errors";
 import helmet from "helmet";
 import toobusy from "toobusy-js";
 import cors from "cors";
+import swaggerUi from "swagger-ui-express";
+import swaggerJson from "./utils/openapi.json";
 
 const app: Express = express();
 
@@ -47,6 +49,12 @@ export const prismaClient = new PrismaClient({
 
 app.use(errorMiddleware);
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerJson));
+app.get("/swagger-json", (req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.send(swaggerJson);
+});
+
 app.listen(PORT, () => {
-  console.log("Listening on port 3000");
+  console.log(`Listening on port ${PORT}`);
 });
