@@ -14,7 +14,7 @@ const app: Express = express();
 app.use(express.json());
 
 app.use(cors());
-
+app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
 
 app.use(function (req, res, next) {
