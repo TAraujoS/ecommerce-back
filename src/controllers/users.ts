@@ -49,7 +49,6 @@ export const listAddress = async (req: Request, res: Response) => {
 };
 
 export const updateUser = async (req: Request, res: Response) => {
-  console.log("UPDATE");
   const validatedData = UpdateUserSchema.parse(req.body);
   let billingAddress: Address;
   let shippingAddress: Address;

@@ -9,7 +9,7 @@ import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import swaggerJson from "./utils/openapi.json";
 
-const app: Express = express();
+export const app: Express = express();
 
 app.use(express.json());
 

@@ -14,8 +14,14 @@ export const errorHandler = (method: Function) => {
         exception = error;
       } else {
         if (error instanceof ZodError) {
-          exception = new BadRequestException(
+          const zodErrors = error.errors.map((e) => ({
+            path: e.path,
+            message: e.message,
+          }));
+
+          exception = new InternalException(
             "Unprocessable Entity",
+            zodErrors,
             ErrorCode.UNPROCESSABLE_ENTITY
           );
         } else {
