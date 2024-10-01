@@ -1,13 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import { prismaClient } from "../../";
-import { signup } from "../../controllers/auth";
+import { login, signup } from "../../controllers/auth";
 import { BadRequestException } from "../../exceptions/bad-requests";
 import { ErrorCode } from "../../exceptions/root";
-import { hashSync } from "bcrypt";
-import { InternalException } from "../../exceptions/internal-exception";
+import { compareSync, hashSync } from "bcrypt";
 import { ZodError } from "zod";
+import * as jwt from "jsonwebtoken";
+import { JWT_SECRET } from "../../secrets";
+import { NotFoundException } from "../../exceptions/not-found";
 
-// Mock das dependências externas
 jest.mock("../../index", () => ({
   prismaClient: {
     user: {
@@ -19,15 +20,19 @@ jest.mock("../../index", () => ({
 
 jest.mock("bcrypt", () => ({
   hashSync: jest.fn(),
+  compareSync: jest.fn(),
 }));
 
-describe("Signup Controller", () => {
+jest.mock("jsonwebtoken", () => ({
+  sign: jest.fn(),
+}));
+
+describe("Auth Controller - Signup", () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
   let mockNext: NextFunction;
 
   beforeEach(() => {
-    // Mockando Request e Response
     mockRequest = {
       body: {
         name: "Test User",
@@ -40,7 +45,6 @@ describe("Signup Controller", () => {
     };
     mockNext = jest.fn();
 
-    // Resetando mocks antes de cada teste
     jest.clearAllMocks();
   });
 
@@ -112,5 +116,108 @@ describe("Signup Controller", () => {
 
     expect(prismaClient.user.findFirst).not.toHaveBeenCalled();
     expect(prismaClient.user.create).not.toHaveBeenCalled();
+  });
+});
+
+describe("Auth Controller - Login", () => {
+  let mockRequest: Partial<Request>;
+  let mockResponse: Partial<Response>;
+
+  beforeEach(() => {
+    mockRequest = {
+      body: {
+        email: "test@example.com",
+        password: "password123",
+      },
+    };
+    mockResponse = {
+      json: jest.fn(),
+    };
+
+    jest.clearAllMocks();
+  });
+
+  it("should authenticate the user successfully", async () => {
+    const mockUser = {
+      id: "123",
+      email: "test@example.com",
+      password: hashSync("password123", 10),
+    };
+
+    (prismaClient.user.findFirst as jest.Mock).mockResolvedValue(mockUser);
+    (jwt.sign as jest.Mock).mockReturnValue("mockToken");
+
+    (compareSync as jest.Mock).mockReturnValue(true);
+
+    await login(mockRequest as Request, mockResponse as Response);
+
+    expect(prismaClient.user.findFirst).toHaveBeenCalledWith({
+      where: { email: "test@example.com" },
+    });
+
+    expect(compareSync).toHaveBeenCalledWith("password123", mockUser.password);
+
+    expect(jwt.sign).toHaveBeenCalledWith({ userId: "123" }, JWT_SECRET);
+
+    expect(mockResponse.json).toHaveBeenCalledWith({
+      user: mockUser,
+      token: "mockToken",
+    });
+  });
+
+  it("should throw an error if the password is incorrect", async () => {
+    mockRequest.body = {
+      email: "test@example.com",
+      password: "wrongpassword",
+    };
+
+    const mockUser = {
+      id: "123",
+      email: "test@example.com",
+      password: hashSync("validpassword", 10),
+    };
+
+    (prismaClient.user.findFirst as jest.Mock).mockResolvedValue(mockUser);
+
+    (compareSync as jest.Mock).mockReturnValue(false);
+
+    await expect(
+      login(mockRequest as Request, mockResponse as Response)
+    ).rejects.toThrow(
+      new BadRequestException(
+        "Incorrect password",
+        ErrorCode.INCORRECT_PASSWORD
+      )
+    );
+
+    expect(prismaClient.user.findFirst).toHaveBeenCalledWith({
+      where: { email: "test@example.com" },
+    });
+
+    expect(compareSync).toHaveBeenCalledWith(
+      "wrongpassword",
+      mockUser.password
+    );
+
+    expect(jwt.sign).not.toHaveBeenCalled();
+  });
+
+  it("should throw an error if user is not found", async () => {
+    mockRequest.body = {
+      email: "nonexistent@example.com",
+      password: "password",
+    };
+
+    (prismaClient.user.findFirst as jest.Mock).mockResolvedValue(null);
+
+    await expect(
+      login(mockRequest as Request, mockResponse as Response)
+    ).rejects.toThrow(
+      new NotFoundException("User not found", ErrorCode.USER_NOT_FOUND)
+    );
+
+    expect(prismaClient.user.findFirst).toHaveBeenCalledWith({
+      where: { email: "nonexistent@example.com" },
+    });
   });
 });
