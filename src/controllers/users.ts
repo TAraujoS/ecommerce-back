@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
-import { prismaClient } from "..";
-import { AddressSchema, UpdateUserSchema } from "../schema/users";
-import { ErrorCode } from "../exceptions/root";
-import { NotFoundException } from "../exceptions/not-found";
-import { Address } from "@prisma/client";
-import { BadRequestException } from "../exceptions/bad-requests";
+import { Request, Response } from 'express';
+import { prismaClient } from '..';
+import { AddressSchema, UpdateUserSchema } from '../schema/users';
+import { ErrorCode } from '../exceptions/root';
+import { NotFoundException } from '../exceptions/not-found';
+import { Address } from '@prisma/client';
+import { BadRequestException } from '../exceptions/bad-requests';
 
 export const addAddress = async (req: Request, res: Response) => {
   AddressSchema.parse(req.body);
@@ -28,13 +28,10 @@ export const deleteAddress = async (req: Request, res: Response) => {
     });
 
     res.json({
-      message: "Address deleted successfully",
+      message: 'Address deleted successfully',
     });
   } catch (error) {
-    throw new NotFoundException(
-      "Address not found",
-      ErrorCode.ADDRESS_NOT_FOUND
-    );
+    throw new NotFoundException('Address not found', ErrorCode.ADDRESS_NOT_FOUND);
   }
 };
 
@@ -61,16 +58,13 @@ export const updateUser = async (req: Request, res: Response) => {
         },
       });
     } catch (error) {
-      throw new NotFoundException(
-        "Address not found",
-        ErrorCode.ADDRESS_NOT_FOUND
-      );
+      throw new NotFoundException('Address not found', ErrorCode.ADDRESS_NOT_FOUND);
     }
 
     if (billingAddress.userId !== req.user.id) {
       throw new BadRequestException(
-        "Address not belong to user",
-        ErrorCode.ADDRESS_DOES_NOT_BELONG_TO_USER
+        'Address not belong to user',
+        ErrorCode.ADDRESS_DOES_NOT_BELONG_TO_USER,
       );
     }
   }
@@ -83,16 +77,13 @@ export const updateUser = async (req: Request, res: Response) => {
         },
       });
     } catch (error) {
-      throw new NotFoundException(
-        "Address not found",
-        ErrorCode.ADDRESS_NOT_FOUND
-      );
+      throw new NotFoundException('Address not found', ErrorCode.ADDRESS_NOT_FOUND);
     }
 
     if (shippingAddress.userId !== req.user.id) {
       throw new BadRequestException(
-        "Address not belong to user",
-        ErrorCode.ADDRESS_DOES_NOT_BELONG_TO_USER
+        'Address not belong to user',
+        ErrorCode.ADDRESS_DOES_NOT_BELONG_TO_USER,
       );
     }
   }
@@ -129,7 +120,7 @@ export const getUserById = async (req: Request, res: Response) => {
 
     res.json(user);
   } catch (error) {
-    throw new NotFoundException("User not found", ErrorCode.USER_NOT_FOUND);
+    throw new NotFoundException('User not found', ErrorCode.USER_NOT_FOUND);
   }
 };
 
@@ -146,6 +137,6 @@ export const changeUserRole = async (req: Request, res: Response) => {
 
     res.json(user);
   } catch (error) {
-    throw new NotFoundException("User not found", ErrorCode.USER_NOT_FOUND);
+    throw new NotFoundException('User not found', ErrorCode.USER_NOT_FOUND);
   }
 };

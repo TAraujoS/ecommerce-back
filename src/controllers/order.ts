@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
-import { prismaClient } from "..";
-import { NotFoundException } from "../exceptions/not-found";
-import { ErrorCode } from "../exceptions/root";
-import { OrderEventStatus } from "@prisma/client";
+import { Request, Response } from 'express';
+import { prismaClient } from '..';
+import { NotFoundException } from '../exceptions/not-found';
+import { ErrorCode } from '../exceptions/root';
+import { OrderEventStatus } from '@prisma/client';
 
 export const createOrder = async (req: Request, res: Response) => {
   return await prismaClient.$transaction(async (prisma) => {
@@ -16,7 +16,7 @@ export const createOrder = async (req: Request, res: Response) => {
     });
 
     if (cartItems.length === 0) {
-      return res.json({ message: "Cart is empty" });
+      return res.json({ message: 'Cart is empty' });
     }
 
     const price = cartItems.reduce((acc, item) => {
@@ -45,7 +45,7 @@ export const createOrder = async (req: Request, res: Response) => {
       },
     });
 
-    const orderEvent = await prisma.orderEvent.create({
+    await prisma.orderEvent.create({
       data: {
         orderId: order.id,
       },
@@ -91,7 +91,7 @@ export const cancelOrder = async (req: Request, res: Response) => {
 
     res.json(order);
   } catch (error) {
-    throw new NotFoundException("Order not found", ErrorCode.ORDER_NOT_FOUND);
+    throw new NotFoundException('Order not found', ErrorCode.ORDER_NOT_FOUND);
   }
 };
 
@@ -109,7 +109,7 @@ export const getOrderById = async (req: Request, res: Response) => {
 
     res.json(order);
   } catch (error) {
-    throw new NotFoundException("Order not found", ErrorCode.ORDER_NOT_FOUND);
+    throw new NotFoundException('Order not found', ErrorCode.ORDER_NOT_FOUND);
   }
 };
 
@@ -151,7 +151,7 @@ export const changeStatus = async (req: Request, res: Response) => {
 
     res.json(order);
   } catch (error) {
-    throw new NotFoundException("Order not found", ErrorCode.ORDER_NOT_FOUND);
+    throw new NotFoundException('Order not found', ErrorCode.ORDER_NOT_FOUND);
   }
 };
 

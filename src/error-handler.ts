@@ -1,10 +1,11 @@
-import { NextFunction, Request, Response } from "express";
-import { ErrorCode, HttpException } from "./exceptions/root";
-import { InternalException } from "./exceptions/internal-exception";
-import { ZodError } from "zod";
-import { BadRequestException } from "./exceptions/bad-requests";
+import { NextFunction, Request, Response } from 'express';
+import { ErrorCode, HttpException } from './exceptions/root';
+import { InternalException } from './exceptions/internal-exception';
+import { ZodError } from 'zod';
 
-export const errorHandler = (method: Function) => {
+export const errorHandler = (
+  method: (req: Request, res: Response, next: NextFunction) => Promise<void>,
+) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       await method(req, res, next);
@@ -20,15 +21,15 @@ export const errorHandler = (method: Function) => {
           }));
 
           exception = new InternalException(
-            "Unprocessable Entity",
+            'Unprocessable Entity',
             zodErrors,
-            ErrorCode.UNPROCESSABLE_ENTITY
+            ErrorCode.UNPROCESSABLE_ENTITY,
           );
         } else {
           exception = new InternalException(
-            "Something went wrong",
+            'Something went wrong',
             error,
-            ErrorCode.INTERNAL_EXCEPTION
+            ErrorCode.INTERNAL_EXCEPTION,
           );
         }
       }

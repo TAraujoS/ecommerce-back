@@ -1,5 +1,5 @@
 {
   "watch": ["src"],
   "ext": ".js,.ts, d.ts",
-  "exec": "npx ts-node --transpile-only ./src/index.ts"
+  "exec": "npx ts-node -r tsconfig-paths/register --transpile-only ./src/index.ts"
 }

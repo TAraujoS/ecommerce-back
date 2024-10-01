@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
-import { ChangeQuantitySchema, CreateCartSchema } from "../schema/cart";
-import { NotFoundException } from "../exceptions/not-found";
-import { ErrorCode } from "../exceptions/root";
-import { Product } from "@prisma/client";
-import { prismaClient } from "..";
-import { BadRequestException } from "../exceptions/bad-requests";
+import { Request, Response } from 'express';
+import { ChangeQuantitySchema, CreateCartSchema } from '../schema/cart';
+import { NotFoundException } from '../exceptions/not-found';
+import { ErrorCode } from '../exceptions/root';
+import { Product } from '@prisma/client';
+import { prismaClient } from '..';
+import { BadRequestException } from '../exceptions/bad-requests';
 
 export const addItemToCart = async (req: Request, res: Response) => {
   const validatedData = CreateCartSchema.parse(req.body);
@@ -17,10 +17,7 @@ export const addItemToCart = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    throw new NotFoundException(
-      "Product not found",
-      ErrorCode.PRODUCT_NOT_FOUND
-    );
+    throw new NotFoundException('Product not found', ErrorCode.PRODUCT_NOT_FOUND);
   }
 
   let cartItem = await prismaClient.cartItem.findFirst({
@@ -63,8 +60,8 @@ export const deleteItemFromCart = async (req: Request, res: Response) => {
 
   if (cartItem.userId !== req.user.id) {
     throw new BadRequestException(
-      "Cart item does not belong to user",
-      ErrorCode.CART_ITEM_NOT_BELONG_TO_USER
+      'Cart item does not belong to user',
+      ErrorCode.CART_ITEM_NOT_BELONG_TO_USER,
     );
   }
 
@@ -79,10 +76,7 @@ export const deleteItemFromCart = async (req: Request, res: Response) => {
       success: true,
     });
   } catch (error) {
-    throw new NotFoundException(
-      "Cart item not found",
-      ErrorCode.CART_ITEM_NOT_FOUND
-    );
+    throw new NotFoundException('Cart item not found', ErrorCode.CART_ITEM_NOT_FOUND);
   }
 };
 
@@ -97,8 +91,8 @@ export const changeQuantity = async (req: Request, res: Response) => {
 
   if (cartItem.userId !== req.user.id) {
     throw new BadRequestException(
-      "Cart item does not belong to user",
-      ErrorCode.CART_ITEM_NOT_BELONG_TO_USER
+      'Cart item does not belong to user',
+      ErrorCode.CART_ITEM_NOT_BELONG_TO_USER,
     );
   }
 

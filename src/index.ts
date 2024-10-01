@@ -1,13 +1,13 @@
-import express, { Express } from "express";
-import { PORT } from "./secrets";
-import rootRouter from "./routes";
-import { PrismaClient } from "@prisma/client";
-import { errorMiddleware } from "./middlewares/errors";
-import helmet from "helmet";
-import toobusy from "toobusy-js";
-import cors from "cors";
-import swaggerUi from "swagger-ui-express";
-import swaggerJson from "./utils/openapi.json";
+import express, { Express } from 'express';
+import { PORT } from './secrets';
+import rootRouter from './routes';
+import { PrismaClient } from '@prisma/client';
+import { errorMiddleware } from './middlewares/errors';
+import helmet from 'helmet';
+import toobusy from 'toobusy-js';
+import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJson from './utils/openapi.json';
 
 export const app: Express = express();
 
@@ -25,10 +25,10 @@ app.use(function (req, res, next) {
   }
 });
 
-app.use("/api", rootRouter);
+app.use('/api', rootRouter);
 
 export const prismaClient = new PrismaClient({
-  log: ["query"],
+  log: ['query'],
 }).$extends({
   result: {
     address: {
@@ -49,9 +49,9 @@ export const prismaClient = new PrismaClient({
 
 app.use(errorMiddleware);
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerJson));
-app.get("/swagger-json", (req, res) => {
-  res.setHeader("Content-Type", "application/json");
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJson));
+app.get('/swagger-json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
   res.send(swaggerJson);
 });
 
