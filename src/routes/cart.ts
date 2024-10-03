@@ -2,7 +2,12 @@ import { Router } from 'express';
 import { errorHandler } from '../error-handler';
 
 import authMiddleware from '../middlewares/auth';
-import { addItemToCart, changeQuantity, deleteItemFromCart, getCart } from '../controllers/cart';
+import {
+  addItemToCart,
+  changeQuantity,
+  deleteItemFromCart,
+  getCart,
+} from '../controllers/cart';
 
 const cartRoutes: Router = Router();
 

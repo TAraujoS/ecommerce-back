@@ -17,7 +17,10 @@ export const addItemToCart = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    throw new NotFoundException('Product not found', ErrorCode.PRODUCT_NOT_FOUND);
+    throw new NotFoundException(
+      'Product not found',
+      ErrorCode.PRODUCT_NOT_FOUND,
+    );
   }
 
   let cartItem = await prismaClient.cartItem.findFirst({
@@ -76,7 +79,10 @@ export const deleteItemFromCart = async (req: Request, res: Response) => {
       success: true,
     });
   } catch (error) {
-    throw new NotFoundException('Cart item not found', ErrorCode.CART_ITEM_NOT_FOUND);
+    throw new NotFoundException(
+      'Cart item not found',
+      ErrorCode.CART_ITEM_NOT_FOUND,
+    );
   }
 };
 

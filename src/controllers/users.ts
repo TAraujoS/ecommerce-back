@@ -31,7 +31,10 @@ export const deleteAddress = async (req: Request, res: Response) => {
       message: 'Address deleted successfully',
     });
   } catch (error) {
-    throw new NotFoundException('Address not found', ErrorCode.ADDRESS_NOT_FOUND);
+    throw new NotFoundException(
+      'Address not found',
+      ErrorCode.ADDRESS_NOT_FOUND,
+    );
   }
 };
 
@@ -58,7 +61,10 @@ export const updateUser = async (req: Request, res: Response) => {
         },
       });
     } catch (error) {
-      throw new NotFoundException('Address not found', ErrorCode.ADDRESS_NOT_FOUND);
+      throw new NotFoundException(
+        'Address not found',
+        ErrorCode.ADDRESS_NOT_FOUND,
+      );
     }
 
     if (billingAddress.userId !== req.user.id) {
@@ -77,7 +83,10 @@ export const updateUser = async (req: Request, res: Response) => {
         },
       });
     } catch (error) {
-      throw new NotFoundException('Address not found', ErrorCode.ADDRESS_NOT_FOUND);
+      throw new NotFoundException(
+        'Address not found',
+        ErrorCode.ADDRESS_NOT_FOUND,
+      );
     }
 
     if (shippingAddress.userId !== req.user.id) {

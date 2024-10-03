@@ -31,7 +31,10 @@ export const updateProduct = async (req: Request, res: Response) => {
 
     res.json(updateProduct);
   } catch (error) {
-    throw new NotFoundException('Product not found', ErrorCode.PRODUCT_NOT_FOUND);
+    throw new NotFoundException(
+      'Product not found',
+      ErrorCode.PRODUCT_NOT_FOUND,
+    );
   }
 };
 
@@ -66,7 +69,10 @@ export const getProductById = async (req: Request, res: Response) => {
 
     res.json(product);
   } catch (error) {
-    throw new NotFoundException('Product not found', ErrorCode.PRODUCT_NOT_FOUND);
+    throw new NotFoundException(
+      'Product not found',
+      ErrorCode.PRODUCT_NOT_FOUND,
+    );
   }
 };
 

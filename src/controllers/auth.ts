@@ -19,7 +19,10 @@ export const signup = async (req: Request, res: Response) => {
   });
 
   if (user) {
-    throw new BadRequestException('User already exists', ErrorCode.USER_ALREADY_EXISTS);
+    throw new BadRequestException(
+      'User already exists',
+      ErrorCode.USER_ALREADY_EXISTS,
+    );
   }
 
   user = await prismaClient.user.create({
@@ -47,7 +50,10 @@ export const login = async (req: Request, res: Response) => {
   }
 
   if (!compareSync(password, user.password)) {
-    throw new BadRequestException('Incorrect password', ErrorCode.INCORRECT_PASSWORD);
+    throw new BadRequestException(
+      'Incorrect password',
+      ErrorCode.INCORRECT_PASSWORD,
+    );
   }
 
   const token = jwt.sign(
